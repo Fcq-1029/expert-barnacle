@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1626">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>部落管家 · 首领专用</title>
+<style>
+:root{
+  --bg:#0b1626;
+  --bg2:#0e1c30;
+  --card:#16263f;
+  --card2:#1b2f4d;
+  --line:#24395c;
+  --gold:#f5b83d;
+  --gold2:#ffcf5c;
+  --text:#e8eef7;
+  --sub:#8fa3c0;
+  --red:#ff5252;
+  --green:#4caf6e;
+  --yellow:#ffc233;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:linear-gradient(180deg,var(--bg2) 0%,var(--bg) 40%);
+  color:var(--text);
+  font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  padding-bottom:calc(76px + env(safe-area-inset-bottom));
+  max-width:520px;margin:0 auto;
+}
+/* ===== Header ===== */
+header{
+  text-align:center;
+  padding:calc(18px + env(safe-area-inset-top)) 16px 12px;
+  border-bottom:1px solid var(--line);
+}
+header h1{font-size:22px;letter-spacing:2px;color:var(--gold2)}
+header p{font-size:12px;color:var(--sub);margin-top:4px}
+/* ===== Tabs ===== */
+nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:520px;
+  background:#0a1322;
+  border-top:1px solid var(--line);
+  display:flex;
+  padding-bottom:env(safe-area-inset-bottom);
+  z-index:50;
+}
+nav button{
+  flex:1;background:none;border:none;color:var(--sub);
+  font-size:11px;padding:10px 0 8px;cursor:pointer;position:relative;
+}
+nav button .ico{display:block;font-size:20px;margin-bottom:2px;filter:grayscale(.6) opacity(.75)}
+nav button.active{color:var(--gold2)}
+nav button.active .ico{filter:none}
+nav button.active::before{
+  content:"";position:absolute;top:0;left:22%;right:22%;height:3px;
+  background:var(--gold);border-radius:0 0 3px 3px;
+}
+.page{display:none;padding:14px 14px 20px;animation:fade .25s}
+.page.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* ===== Cards ===== */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
+}
+.card h3{font-size:14px;color:var(--gold2);margin-bottom:12px}
+.card h3 .en{color:var(--sub);font-weight:normal;font-size:11px;margin-left:6px}
+/* ===== War ===== */
+.war-hero{
+  text-align:center;padding:26px 16px;
+}
+.war-hero .state{font-size:13px;color:var(--sub);margin-bottom:14px}
+.cd{
+  font-size:42px;font-weight:700;letter-spacing:3px;color:var(--gold);
+  font-variant-numeric:tabular-nums;
+}
+.cd.dim{color:var(--sub)}
+.cd.danger{color:var(--red);animation:blink 1s step-start infinite}
+@keyframes blink{50%{opacity:.25}}
+.war-hero .until{font-size:12px;color:var(--sub);margin-top:10px}
+select,input,textarea{
+  width:100%;background:var(--bg);border:1px solid var(--line);
+  color:var(--text);border-radius:10px;padding:12px;font-size:14px;
+  outline:none;appearance:none;-webkit-appearance:none;
+}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--sub) 50%),linear-gradient(135deg,var(--sub) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 55%,calc(100% - 14px) 55%;
+  background-size:6px 6px,6px 6px;background-repeat:no-repeat;}
+textarea{min-height:130px;resize:vertical;line-height:1.6;font-size:13px}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+label.lb{display:block;font-size:12px;color:var(--sub);margin:12px 0 6px}
+.btn{
+  display:block;width:100%;border:none;border-radius:12px;
+  padding:13px;font-size:15px;font-weight:600;cursor:pointer;margin-top:10px;
+}
+.btn.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#3a2a05}
+.btn.dark{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.btn.red{background:rgba(255,82,82,.12);color:var(--red);border:1px solid rgba(255,82,82,.35)}
+.btn.small{width:auto;padding:9px 16px;font-size:13px;margin:0}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+/* ===== Members ===== */
+.m-summary{display:flex;gap:10px;margin-bottom:14px}
+.m-summary .card{flex:1;margin:0;text-align:center;padding:12px}
+.m-summary b{font-size:20px;color:var(--gold2);display:block}
+.m-summary span{font-size:11px;color:var(--sub)}
+.m-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:12px;margin-bottom:10px;cursor:pointer;
+}
+.m-item:active{background:var(--card2)}
+.m-avatar{
+  width:42px;height:42px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,#2a4066,#1b2c48);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;color:var(--gold2);
+}
+.m-info{flex:1;min-width:0}
+.m-name{font-size:15px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.m-meta{font-size:11px;color:var(--sub);margin-top:3px}
+.role{font-size:10px;padding:1px 7px;border-radius:8px;border:1px solid var(--line);color:var(--sub)}
+.role.leader{color:var(--gold);border-color:var(--gold)}
+.role.coleader{color:#7fb3ff;border-color:#7fb3ff}
+.role.elder{color:#7ee0a3;border-color:#7ee0a3}
+.act-bar{height:6px;border-radius:3px;background:#0a1526;margin-top:7px;overflow:hidden}
+.act-fill{height:100%;border-radius:3px}
+.tag{color:var(--sub);font-size:11px}
+.search-box{margin-bottom:12px}
+/* ===== Modal ===== */
+.mask{
+  position:fixed;inset:0;background:rgba(4,10,20,.72);z-index:90;
+  display:none;align-items:flex-end;justify-content:center;
+}
+.mask.on{display:flex}
+.modal{
+  width:100%;max-width:520px;background:var(--card);
+  border-radius:18px 18px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow-y:auto;
+}
+.modal h3{text-align:center;color:var(--gold2);margin-bottom:14px;font-size:16px}
+/* ===== Import preview ===== */
+.pv{max-height:240px;overflow-y:auto;margin-top:10px}
+.pv-line{font-size:12px;padding:7px 10px;border-bottom:1px solid var(--line);color:var(--sub)}
+.pv-line b{color:var(--text)}
+.tip{font-size:12px;color:var(--sub);line-height:1.7}
+.toast{
+  position:fixed;left:50%;bottom:110px;transform:translateX(-50%);
+  background:#223a5e;color:#fff;padding:10px 20px;border-radius:20px;
+  font-size:13px;z-index:99;opacity:0;pointer-events:none;transition:.3s;
+  border:1px solid var(--gold);color:var(--gold2);
+}
+.toast.on{opacity:1}
+.empty{text-align:center;color:var(--sub);font-size:13px;padding:30px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏰 部落管家</h1>
+  <p>首领专用 · 数据保存在本机</p>
+</header>
+
+<!-- ================= 部落战 ================= -->
+<section class="page on" id="page-war">
+  <div class="card war-hero">
+    <div class="state" id="warState">未设置部落战时间</div>
+    <div class="cd dim" id="cd">--:--:--</div>
+    <div class="until" id="warUntil"></div>
+  </div>
+
+  <div class="card">
+    <h3>设置部落战</h3>
+    <label class="lb">倒计时目标</label>
+    <select id="warType">
+      <option value="battle">⏰ 倒计时到「战斗日结束」</option>
+      <option value="prep">🛡️ 倒计时到「准备日结束」</option>
+    </select>
+    <label class="lb">结束时间</label>
+    <input type="datetime-local" id="warEnd">
+    <button class="btn gold" onclick="saveWar()">保存倒计时</button>
+  </div>
+
+  <div class="card">
+    <h3>快捷设置</h3>
+    <button class="btn dark" onclick="quickWar(23)">刚开战：23小时后结束</button>
+    <button class="btn dark" onclick="quickWar(1)">战斗日只剩1小时</button>
+    <button class="btn red" onclick="clearWar()">清除倒计时</button>
+  </div>
+
+  <div class="card">
+    <h3>战况速记</h3>
+    <div class="row">
+      <div><label class="lb">我方获得星数</label><input type="number" id="ourStars" min="0" max="180" inputmode="numeric"></div>
+      <div><label class="lb">敌方获得星数</label><input type="number" id="enemyStars" min="0" max="180" inputmode="numeric"></div>
+    </div>
+    <button class="btn dark" onclick="saveStars()">保存战况</button>
+  </div>
+</section>
+
+<!-- ================= 成员档案 ================= -->
+<section class="page" id="page-member">
+  <div class="m-summary">
+    <div class="card"><b id="stCount">0</b><span>成员总数</span></div>
+    <div class="card"><b id="stAct">--</b><span>平均活跃度</span></div>
+  </div>
+  <div class="search-box"><input id="search" placeholder="🔍 搜索昵称 / 标签" oninput="renderMembers()"></div>
+  <div id="memberList"></div>
+  <button class="btn gold" onclick="openEdit()">＋ 手动添加成员</button>
+</section>
+
+<!-- ================= 批量导入 ================= -->
+<section class="page" id="page-import">
+  <div class="card">
+    <h3>📷 图片识别采集 <span class="en">截图/拍照 → 自动OCR</span></h3>
+    <p class="tip">对游戏内成员列表<b>截图或拍照</b>，App 内置 OCR 自动识别并填入文本框，不用再切换到别的工具提取文字。首次使用需下载识别模型（约15MB，之后有缓存，建议 Wi-Fi 下首次使用）。</p>
+    <input type="file" id="ocrFile" accept="image/*" capture="environment" style="display:none" onchange="doOCR(this)">
+    <button class="btn dark" onclick="document.getElementById('ocrFile').click()">📷 拍摄 / 选择图片</button>
+    <div class="pv" id="ocrStatus"></div>
+  </div>
+  <div class="card">
+    <h3>自动采集 · 粘贴即建档</h3>
+    <p class="tip">
+      把游戏内<b>成员列表的识别文字</b>（截图后长按提取文字，或直接复制）粘贴到下面，点击解析。<br>
+      自动识别：<b>昵称、玩家标签(#开头)、大本营等级、奖杯数、职位</b>。已有相同标签/昵称的成员会自动更新，不会重复建档。
+    </p>
+    <label class="lb">粘贴成员文字</label>
+    <textarea id="rawText" placeholder="例：&#10;野猪骑士 #8LQP92UJ 大本营14 4876 首领&#10;小 affection #2YPQ8GQ9 本13 4210 副首领&#10;TH12 暗夜刀哥 #9QUU8P2C 3955 长老"></textarea>
+    <button class="btn gold" onclick="parseRaw()">解析预览</button>
+    <div class="pv" id="preview"></div>
+    <button class="btn gold" id="importBtn" style="display:none" onclick="doImport()">确认导入</button>
+  </div>
+  <div class="card">
+    <h3>说明</h3>
+    <p class="tip">部落冲突<b>国服</b>不在 Supercell 官方 API 覆盖范围内，无法直连游戏服务器自动拉取数据。本 App 的「自动采集」= 你粘贴识别文字 → App 全自动解析、匹配、建档、去重、更新，全程无需手动填写。</p>
+  </div>
+</section>
+
+<!-- ================= 设置 ================= -->
+<section class="page" id="page-set">
+  <div class="card">
+    <h3>部落信息</h3>
+    <label class="lb">部落名称</label>
+    <input id="clanName" placeholder="例如：飞龙在天">
+    <label class="lb">部落标签</label>
+    <input id="clanTag" placeholder="例如：#8LQP92UJ">
+    <button class="btn gold" onclick="saveClan()">保存</button>
+  </div>
+  <div class="card">
+    <h3>备份与恢复</h3>
+    <button class="btn dark" onclick="exportData()">导出备份（下载文件）</button>
+    <label class="lb">恢复：粘贴备份内容</label>
+    <textarea id="restoreText" placeholder="粘贴之前导出的备份 JSON"></textarea>
+    <button class="btn dark" onclick="restoreData()">恢复数据</button>
+  </div>
+  <div class="card">
+    <h3>危险操作</h3>
+    <button class="btn red" onclick="wipe()">清空全部数据</button>
+  </div>
+  <p style="text-align:center;color:var(--sub);font-size:11px;margin-top:6px">部落管家 v2.0 · 供首领管理使用</p>
+</section>
+
+<!-- ================= 成员编辑弹窗 ================= -->
+<div class="mask" id="mask" onclick="if(event.target===this)closeEdit()">
+  <div class="modal">
+    <h3 id="editTitle">添加成员</h3>
+    <label class="lb">昵称 *</label><input id="fName" placeholder="游戏昵称">
+    <label class="lb">玩家标签</label><input id="fTag" placeholder="#XXXXXXXX">
+    <div class="row">
+      <div><label class="lb">本营等级</label><input id="fTH" type="number" min="1" max="20" inputmode="numeric"></div>
+      <div><label class="lb">奖杯数</label><input id="fTrophy" type="number" inputmode="numeric"></div>
+    </div>
+    <label class="lb">职位</label>
+    <select id="fRole">
+      <option value="member">成员</option>
+      <option value="elder">长老</option>
+      <option value="coleader">副首领</option>
+      <option value="leader">首领</option>
+    </select>
+    <label class="lb">活跃度：<span id="actVal">50</span></label>
+    <input type="range" id="fAct" min="0" max="100" value="50" style="padding:0" oninput="document.getElementById('actVal').textContent=this.value">
+    <label class="lb">备注</label>
+    <input id="fNote" placeholder="例如：打仗稳定 / 长期潜水">
+    <button class="btn gold" onclick="saveMember()">保存成员</button>
+    <button class="btn red" id="delBtn" style="display:none" onclick="delMember()">删除该成员</button>
+    <button class="btn dark" onclick="closeEdit()">取消</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 数据层 ================= */
+const DB_KEY='clan_manager_v2';
+let db=load();
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(DB_KEY));if(d&&typeof d==='object')return d;}catch(e){}
+  return {clan:{name:'',tag:''},members:[],war:{type:'battle',end:null,ourStars:null,enemyStars:null},editIdx:null};
+}
+function save(){localStorage.setItem(DB_KEY,JSON.stringify(db));}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800);}
+const ROLE_TXT={leader:'首领',coleader:'副首领',elder:'长老',member:'成员'};
+const ROLE_CLS={leader:'leader',coleader:'coleader',elder:'elder',member:''};
+
+/* ================= Tabs ================= */
+function tab(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('on');
+  btn.classList.add('active');
+}
+
+/* ================= 部落战 ================= */
+function fmtLocal(dt){
+  const p=n=>String(n).padStart(2,'0');
+  return `${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;
+}
+function saveWar(){
+  const v=document.getElementById('warEnd').value;
+  if(!v)return toast('请先选择结束时间');
+  db.war.type=document.getElementById('warType').value;
+  db.war.end=new Date(v).getTime();
+  save();tick();toast('倒计时已保存');
+}
+function quickWar(h){
+  db.war.type='battle';
+  db.war.end=Date.now()+h*3600*1000;
+  save();tick();toast('已设置：'+h+'小时后结束');
+}
+function clearWar(){db.war.end=null;save();tick();toast('已清除倒计时');}
+function saveStars(){
+  db.war.ourStars=document.getElementById('ourStars').value;
+  db.war.enemyStars=document.getElementById('enemyStars').value;
+  save();toast('战况已保存');
+}
+function tick(){
+  const cd=document.getElementById('cd'),st=document.getElementById('warState'),un=document.getElementById('warUntil');
+  if(!db.war.end){st.textContent='未设置部落战时间';cd.textContent='--:--:--';cd.className='cd dim';un.textContent='';return;}
+  const diff=db.war.end-Date.now();
+  const target=db.war.type==='prep'?'准备日结束':'战斗日结束';
+  if(diff<=0){st.textContent='本场部落战已结束';cd.textContent='00:00:00';cd.className='cd dim';un.textContent='';return;}
+  const h=Math.floor(diff/3600000),m=Math.floor(diff%3600000/60000),s=Math.floor(diff%60000/1000);
+  const p=n=>String(n).padStart(2,'0');
+  cd.textContent=`${p(h)}:${p(m)}:${p(s)}`;
+  cd.className='cd'+(diff<3*3600000?' danger':'');
+  st.textContent=diff<3*3600000?'⚠️ 战斗日即将结束，抓紧进攻！':'距离「'+target+'」结束';
+  const d=new Date(db.war.end);
+  un.textContent='结束时间：'+d.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+setInterval(tick,1000);
+
+/* ================= 成员档案 ================= */
+function actColor(v){return v<40?'var(--red)':v<70?'var(--yellow)':'var(--green)';}
+function renderMembers(){
+  const kw=(document.getElementById('search').value||'').toLowerCase();
+  const list=document.getElementById('memberList');
+  const ms=db.members.filter(m=>!kw||m.name.toLowerCase().includes(kw)||(m.tag||'').toLowerCase().includes(kw));
+  document.getElementById('stCount').textContent=db.members.length;
+  document.getElementById('stAct').textContent=db.members.length?Math.round(db.members.reduce((a,m)=>a+(+m.act||0),0)/db.members.length):'--';
+  if(!ms.length){list.innerHTML='<div class="empty">暂无成员，去「批量导入」粘贴采集，或手动添加</div>';return;}
+  list.innerHTML=ms.map(m=>{
+    const act=+m.act||0;
+    return `<div class="m-item" onclick="openEdit(${db.members.indexOf(m)})">
+      <div class="m-avatar">${esc(m.name.slice(0,1))}</div>
+      <div class="m-info">
+        <div class="m-name">${esc(m.name)}
+          <span class="role ${ROLE_CLS[m.role]||''}">${ROLE_TXT[m.role]||'成员'}</span>
+          ${m.th?'<span class="tag">本营'+m.th+'</span>':''}
+        </div>
+        <div class="m-meta">${m.tag?esc(m.tag)+' · ':''}${m.trophy?m.trophy+'杯 · ':''}${m.note?esc(m.note):'无备注'}</div>
+        <div class="act-bar"><div class="act-fill" style="width:${act}%;background:${actColor(act)}"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+/* ---- 编辑弹窗 ---- */
+function openEdit(idx){
+  db.editIdx=(idx===undefined||idx===null||idx<0)?null:idx;
+  const m=db.editIdx===null?{}:db.members[db.editIdx];
+  document.getElementById('editTitle').textContent=db.editIdx===null?'添加成员':'编辑成员';
+  document.getElementById('fName').value=m.name||'';
+  document.getElementById('fTag').value=m.tag||'';
+  document.getElementById('fTH').value=m.th||'';
+  document.getElementById('fTrophy').value=m.trophy||'';
+  document.getElementById('fRole').value=m.role||'member';
+  document.getElementById('fAct').value=m.act??50;
+  document.getElementById('actVal').textContent=m.act??50;
+  document.getElementById('fNote').value=m.note||'';
+  document.getElementById('delBtn').style.display=db.editIdx===null?'none':'block';
+  document.getElementById('mask').classList.add('on');
+}
+function closeEdit(){document.getElementById('mask').classList.remove('on');}
+function saveMember(){
+  const name=document.getElementById('fName').value.trim();
+  if(!name)return toast('请填写昵称');
+  const m={
+    name,tag:document.getElementById('fTag').value.trim(),
+    th:+document.getElementById('fTH').value||null,
+    trophy:+document.getElementById('fTrophy').value||null,
+    role:document.getElementById('fRole').value,
+    act:+document.getElementById('fAct').value,
+    note:document.getElementById('fNote').value.trim(),
+  };
+  if(db.editIdx===null)db.members.push(m);else db.members[db.editIdx]=m;
+  save();closeEdit();renderMembers();toast('已保存');
+}
+function delMember(){
+  if(db.editIdx===null)return;
+  db.members.splice(db.editIdx,1);save();closeEdit();renderMembers();toast('已删除');
+}
+
+/* ================= 批量导入：自动解析 ================= */
+let pending=[];
+function parseRaw(){
+  const txt=document.getElementById('rawText').value.trim();
+  if(!txt)return toast('请先粘贴文字');
+  const lines=txt.split(/\n+/).map(l=>l.trim()).filter(l=>l.length>2);
+  pending=[];
+  for(const line of lines){
+    const m=parseLine(line);
+    if(m)pending.push(m);
+  }
+  const pv=document.getElementById('preview');
+  if(!pending.length){pv.innerHTML='<div class="pv-line">没有解析出任何成员，请检查文字内容</div>';document.getElementById('importBtn').style.display='none';return;}
+  pv.innerHTML='<div class="pv-line">共识别 <b>'+pending.length+'</b> 名成员：</div>'+pending.map(m=>
+    `<div class="pv-line">✅ <b>${esc(m.name)}</b> ${m.tag?esc(m.tag)+' ':''}${m.th?'本'+m.th+' ':''}${m.trophy?m.trophy+'杯 ':''}${m.role?ROLE_TXT[m.role]:''}</div>`).join('');
+  document.getElementById('importBtn').style.display='block';
+}
+function parseLine(line){
+  // 提取 #标签
+  const tagM=line.match(/#[A-Z0-9]{4,12}/i);
+  const tag=tagM?tagM[0].toUpperCase():null;
+  // 提取本营等级：本营14 / 本14 / 大本营14 / TH14 / 14本
+  let th=null;
+  const thM=line.match(/(?:本营|大本营|本|TH|th)\s*[:：]?\s*(\d{1,2})/)||line.match(/(\d{1,2})\s*本/);
+  if(thM){const v=+thM[1];if(v>=1&&v<=20)th=v;}
+  // 提取奖杯数：3~5位独立数字（排除本营）
+  let trophy=null;
+  const nums=[...line.matchAll(/(?<![#\d])\d{3,5}(?!\d|[个人信息])/g)].map(x=>+x[0]).filter(n=>n!==th);
+  if(nums.length)trophy=Math.max(...nums);
+  // 提取职位
+  let role='member';
+  if(/首领|leader/i.test(line)&&!/副/.test(line))role='leader';
+  else if(/副首领|co.?leader/i.test(line))role='coleader';
+  else if(/长老|elder/i.test(line))role='elder';
+  // 昵称 = 去掉标签、本营、杯数、职位后的剩余文本
+  let name=line
+    .replace(tag||'§','')
+    .replace(/(?:本营|大本营|本|TH|th)\s*[:：]?\s*\d{1,2}/g,'')
+    .replace(/\d{1,2}\s*本/g,'')
+    .replace(/\d{3,5}/g,'')
+    .replace(/首领|副首领|长老|成员|leader|co.?leader|elder|member|战斗|活跃|奖杯|杯/gi,'')
+    .replace(/[|｜·,，。;；:：\s#]+/g,' ')
+    .trim();
+  if(!name)return null;
+  return {name,tag,th,trophy,role,act:50,note:''};
+}
+function doImport(){
+  let added=0,updated=0;
+  for(const m of pending){
+    const hit=db.members.find(x=>(m.tag&&x.tag===m.tag)||(x.name===m.name));
+    if(hit){Object.assign(hit,{...m,act:hit.act??50,note:hit.note||''});updated++;}
+    else{db.members.push({...m});added++;}
+  }
+  save();renderMembers();
+  document.getElementById('rawText').value='';
+  document.getElementById('preview').innerHTML='';
+  document.getElementById('importBtn').style.display='none';
+  toast('导入完成：新增'+added+'，更新'+updated);
+  tab('member',document.querySelectorAll('nav button')[1]);
+}
+
+/* ================= OCR 图片识别采集 ================= */
+let tessLoading=null;
+function loadTess(){
+  if(window.Tesseract)return Promise.resolve();
+  if(tessLoading)return tessLoading;
+  tessLoading=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+    s.onload=res;
+    s.onerror=()=>{tessLoading=null;rej(new Error('load fail'));};
+    document.head.appendChild(s);
+  });
+  return tessLoading;
+}
+async function doOCR(inp){
+  const f=inp.files&&inp.files[0];
+  inp.value='';
+  if(!f)return;
+  const st=document.getElementById('ocrStatus');
+  st.innerHTML='<div class="pv-line">⏳ 正在加载识别引擎…（首次约15MB，请稍候）</div>';
+  try{
+    await loadTess();
+    const ret=await Tesseract.recognize(f,'chi_sim+eng',{logger:m=>{
+      if(m.status==='recognizing text')
+        st.innerHTML='<div class="pv-line">🔍 识别中… '+Math.round(m.progress*100)+'%</div>';
+    }});
+    const text=(ret.data.text||'').trim();
+    if(!text)throw new Error('empty');
+    const box=document.getElementById('rawText');
+    box.value=(box.value?box.value.replace(/\s+$/,'')+'\n':'')+text;
+    st.innerHTML='<div class="pv-line">✅ 识别完成，已填入下方文本框，请点「解析预览」核对结果</div>';
+  }catch(e){
+    st.innerHTML='<div class="pv-line">❌ 识别失败（模型下载失败或图片不清晰）。可改用微信/QQ提取文字后粘贴，效果一样。</div>';
+  }
+}
+
+/* ================= 设置 ================= */
+function saveClan(){
+  db.clan.name=document.getElementById('clanName').value.trim();
+  db.clan.tag=document.getElementById('clanTag').value.trim();
+  save();toast('部落信息已保存');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='部落管家备份_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();toast('备份已导出');
+}
+function restoreData(){
+  try{
+    let d=JSON.parse(document.getElementById('restoreText').value);
+    if(Array.isArray(d))d={members:d};                    // 兼容纯成员数组备份
+    if(d&&d.data&&Array.isArray(d.data.members))d=d.data; // 兼容 {data:{members}}
+    if(!d||!Array.isArray(d.members))throw 0;
+    db=Object.assign(load(),d);save();applyAll();toast('恢复成功');
+  }catch(e){toast('备份内容无效');}
+}
+function wipe(){
+  if(!confirm('确定清空全部数据？此操作不可恢复！'))return;
+  if(!confirm('再次确认：真的要清空吗？建议先导出备份。'))return;
+  localStorage.removeItem(DB_KEY);db=load();applyAll();toast('已清空');
+}
+
+/* ================= 初始化 ================= */
+function applyAll(){
+  document.getElementById('clanName').value=db.clan.name||'';
+  document.getElementById('clanTag').value=db.clan.tag||'';
+  document.getElementById('ourStars').value=db.war.ourStars??'';
+  document.getElementById('enemyStars').value=db.war.enemyStars??'';
+  if(db.war.end)document.getElementById('warEnd').value=fmtLocal(new Date(db.war.end));
+  renderMembers();tick();
+}
+applyAll();
+</script>
+</body>
+</html>
